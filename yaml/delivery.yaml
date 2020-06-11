@@ -1,0 +1,98 @@
+# Deployments
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-delivery-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-delivery
+  template:
+    metadata:
+      labels:
+        app: erp-delivery
+    spec:
+      containers:
+      - name: erp-delivery-container
+        image: 310194/erp_deliveryapi
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "250Mi"
+          limits:
+            cpu: "125m"
+            memory: "250Mi"
+        env:
+          - name: SQL_SERVER_HOST
+            value: sqlserver-service
+          - name: SQL_SERVER_PORT
+            value: "1433"
+          - name: SQL_SERVER_DATA_BASE
+            value: Inventory
+          - name: SQL_SERVER_USER_NAME
+            value: sa
+          - name: SQL_SERVER_PASSWORD
+            value: desenv
+          - name: RABBITMQ_HOST_NAME
+            value: rabbitmq-service
+          - name: RABBITMQ_PORT
+            value: "5672"
+          - name: RABBITMQ_USER
+            value: guest
+          - name: RABBITMQ_PASSWORD
+            value: guest
+          - name: RABBITMQ_EXCHANGE
+            value: erp_message_bus
+          - name: RABBITMQ_QUEUE_NAME
+            value: purchasing
+        ports:
+        - containerPort: 80
+
+---
+
+# Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-delivery-service
+spec:
+  externalName: erp-delivery
+  selector:
+    app: erp-delivery
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+
+---
+
+# HPAs
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-delivery-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-delivery-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 100m 
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 200Mi

@@ -1,0 +1,100 @@
+# Deployments
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-purchase-deploy
+  labels:
+    app: erp-purchase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-purchase
+  template:
+    metadata:
+      labels:
+        app: erp-purchase
+    spec:
+      containers:
+      - name: erp-purchase
+        image: laionfb/erp_purchase
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "250Mi"
+          limits:
+            cpu: "125m"
+            memory: "250Mi"
+        env:
+        - name: PORT
+          value: "80"
+        - name: NODE_ENV
+          value: production
+        - name: DB_HOST
+          value: sqlserver-service
+        - name: DB_PORT
+          value: "1433"
+        - name: DB_USER
+          value: sa
+        - name: DB_PASSWORD
+          value: TCCpurchase01
+        - name: DB_DATABASE
+          value: ERPPurchaseModule
+        - name: RMQ_HOST
+          value: rabbitmq-service
+        - name: RMQ_PORT
+          value: "5672"
+        - name: RMQ_EXCHANGE
+          value: erp_message_bus
+        - name: RMQ_QUEUE
+          value: purchasing
+        ports:
+        - containerPort: 80
+
+---
+
+# Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-purchase-service
+spec:
+  externalName: erp-purchase
+  selector:
+    app: erp-purchase
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+
+---
+
+# HPAs
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-purchase-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-purchase-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 100m 
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 200Mi

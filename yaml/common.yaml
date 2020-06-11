@@ -1,0 +1,144 @@
+# Deployments
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-deploy
+  labels:
+    app: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3-management
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "250Mi"
+          limits:
+            cpu: "125m"
+            memory: "250Mi"
+        ports:
+        - containerPort: 5672
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlserver-deploy
+  labels:
+    app: sqlserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlserver
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+    spec:
+      hostname: sqlserver
+      containers:
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "250Mi"
+          limits:
+            cpu: "125m"
+            memory: "250Mi"
+        env:
+        - name: SA_PASSWORD
+          value: "TCCpurchase01"
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 1433
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deploy
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      hostname: redis
+      containers:
+      - name: redis-container
+        image: redis:4-alpine
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "250Mi"
+          limits:
+            cpu: "125m"
+            memory: "250Mi"
+        ports:
+        - containerPort: 6379
+
+---
+
+# Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-service
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+  - name: messagebus
+    port: 5672
+    targetPort: 5672
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlserver-service
+spec:
+  externalName: sqlserver
+  selector:
+    app: sqlserver
+  ports:
+  - name: database
+    port: 1433
+    targetPort: 1433
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+  - name: database
+    port: 6379
+    targetPort: 6379
