@@ -1,3 +1,3 @@
-# Erp - Purchase Module
+# Erp - Microservices
 
-The purchase module for a microservices ERP made with Node.js + Rabbit MQ + Microsoft SQL Server
+The files needed to deploy an ERP made with microservices architecture.
