@@ -34,7 +34,7 @@ spec:
           - name: SQL_SERVER_USER_NAME
             value: sa
           - name: SQL_SERVER_PASSWORD
-            value: desenv
+            value: TCCpurchase01
           - name: RABBITMQ_HOST_NAME
             value: rabbitmq-service
           - name: RABBITMQ_PORT
