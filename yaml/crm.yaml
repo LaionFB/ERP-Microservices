@@ -11,7 +11,7 @@ spec:
   ports:
   - name: http
     port: 8000
-    targetPort: 5000
+    targetPort: 8000
   type: LoadBalancer
 
 ---
@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: erp-crm-gatewayapi-container
-        image: rafaelgalani/crm_gateway_x
+        image: rafaelgalani/crm_gateway:13-06-v2
         resources:
           requests:
             cpu: "125m"
@@ -56,7 +56,7 @@ spec:
           - name: REDIS_PORT
             value: "6379"
         ports:
-        - containerPort: 5000
+        - containerPort: 8000
 
 ---
 
@@ -96,7 +96,7 @@ spec:
     spec:
       containers:
       - name: erp-crm-quotesapi-container
-        image: rafaelgalani/crm_quotes_x
+        image: rafaelgalani/crm_quotes:13-06-v2
         resources:
           requests:
             cpu: "125m"
