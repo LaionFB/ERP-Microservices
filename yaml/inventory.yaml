@@ -10,10 +10,10 @@ spec:
     app: erp-inventory
   ports:
   - name: http
-    port: 5004
+    port: 80
     targetPort: 80
   - name: https
-    port: 5005
+    port: 443
     targetPort: 443 
   type: LoadBalancer
 
@@ -76,27 +76,27 @@ spec:
 
 # HPAs
 
-# apiVersion: autoscaling/v2beta2
-# kind: HorizontalPodAutoscaler
-# metadata:
-#   name: erp-inventory-hpa
-# spec:
-#   scaleTargetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: erp-inventory-deploy
-#   minReplicas: 1
-#   maxReplicas: 8
-#   metrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       target:
-#         type: Value
-#         averageValue: 100m 
-#   - type: Resource
-#     resource:
-#       name: memory
-#       target:
-#         type: AverageValue
-#         averageValue: 200Mi
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-inventory-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-inventory-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 100m 
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 200Mi

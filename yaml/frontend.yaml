@@ -1,0 +1,77 @@
+# Deployments
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-frontend-deploy
+  labels:
+    app: erp-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-frontend
+  template:
+    metadata:
+      labels:
+        app: erp-frontend
+    spec:
+      containers:
+      - name: erp-frontend
+        image: laionfb/erp_ng_frontend:v1
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "250Mi"
+          limits:
+            cpu: "125m"
+            memory: "250Mi"
+        ports:
+        - containerPort: 80
+
+---
+
+# Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-frontend-service
+spec:
+  externalName: erp-frontend
+  selector:
+    app: erp-frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+
+---
+
+# HPAs
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-frontend-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-frontend-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 100m 
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 200Mi

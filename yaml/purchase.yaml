@@ -1,27 +1,9 @@
-# Services
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-purchase-service
-spec:
-  externalName: erp-purchase
-  selector:
-    app: erp-purchase
-  ports:
-  - protocol: TCP
-    port: 3000
-    targetPort: 3000
-  type: LoadBalancer
-
----
-
 # Deployments
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erp-purchase-deployment
+  name: erp-purchase-deploy
   labels:
     app: erp-purchase
 spec:
@@ -36,7 +18,7 @@ spec:
     spec:
       containers:
       - name: erp-purchase
-        image: laionfb/erp_purchase
+        image: laionfb/erp_purchase:v2
         resources:
           requests:
             cpu: "125m"
@@ -46,55 +28,79 @@ spec:
             memory: "256Mi"
         env:
         - name: PORT
-          value: "3000"
-        - name: NODE_ENV
-          value: production
-        - name: DB_HOST
+          value: "80"
+        - name: API_GATEWAY_PATH
+          value: "/api/purchase"
+        - name: SQL_SERVER_HOST
           value: sqlserver-service
-        - name: DB_PORT
+        - name: SQL_SERVER_PORT
           value: "1433"
-        - name: DB_USER
+        - name: SQL_SERVER_USER
           value: sa
-        - name: DB_PASSWORD
+        - name: SQL_SERVER_PASSWORD
           value: TCCpurchase01
-        - name: DB_DATABASE
+        - name: SQL_SERVER_DATA_BASE
           value: ERPPurchaseModule
-        - name: RMQ_HOST
+        - name: RABBITMQ_HOST
           value: rabbitmq-service
-        - name: RMQ_PORT
+        - name: RABBITMQ_PORT
           value: "5672"
-        - name: RMQ_EXCHANGE
+        - name: RABBITMQ_EXCHANGE
           value: erp_message_bus
-        - name: RMQ_QUEUE
+        - name: RABBITMQ_QUEUE
           value: purchasing
+        - name: DB_SYNC_DATABASE
+          value: "Y"
+        - name: DB_SYNC_TABLES
+          value: "Y"
+        - name: DB_SYNC_DATA
+          value: "Y"
         ports:
-        - containerPort: 3000
+        - containerPort: 80
+
+---
+
+# Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-purchase-service
+spec:
+  externalName: erp-purchase
+  selector:
+    app: erp-purchase
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
 
 ---
 
 # HPAs
 
-# apiVersion: autoscaling/v2beta2
-# kind: HorizontalPodAutoscaler
-# metadata:
-#   name: erp-purchase-hpa
-# spec:
-#   scaleTargetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: erp-purchase-deploy
-#   minReplicas: 1
-#   maxReplicas: 8
-#   metrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       target:
-#         type: Value
-#         averageValue: 100m 
-#   - type: Resource
-#     resource:
-#       name: memory
-#       target:
-#         type: AverageValue
-#         averageValue: 200Mi
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-purchase-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-purchase-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 100m 
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 200Mi
