@@ -1,9 +1,27 @@
+# Services
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-purchase-service
+spec:
+  externalName: erp-purchase
+  selector:
+    app: erp-purchase
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: LoadBalancer
+
+---
+
 # Deployments
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erp-purchase-deploy
+  name: erp-purchase-deployment
   labels:
     app: erp-purchase
 spec:
@@ -22,13 +40,13 @@ spec:
         resources:
           requests:
             cpu: "125m"
-            memory: "250Mi"
+            memory: "128Mi"
           limits:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "200m"
+            memory: "256Mi"
         env:
         - name: PORT
-          value: "80"
+          value: "3000"
         - name: NODE_ENV
           value: production
         - name: DB_HOST
@@ -50,51 +68,33 @@ spec:
         - name: RMQ_QUEUE
           value: purchasing
         ports:
-        - containerPort: 80
-
----
-
-# Services
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-purchase-service
-spec:
-  externalName: erp-purchase
-  selector:
-    app: erp-purchase
-  ports:
-  - name: http
-    port: 80
-    targetPort: 80
-  type: LoadBalancer
+        - containerPort: 3000
 
 ---
 
 # HPAs
 
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: erp-purchase-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: erp-purchase-deploy
-  minReplicas: 1
-  maxReplicas: 8
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Value
-        averageValue: 100m 
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: AverageValue
-        averageValue: 200Mi
+# apiVersion: autoscaling/v2beta2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: erp-purchase-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: erp-purchase-deploy
+#   minReplicas: 1
+#   maxReplicas: 8
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       target:
+#         type: Value
+#         averageValue: 100m 
+#   - type: Resource
+#     resource:
+#       name: memory
+#       target:
+#         type: AverageValue
+#         averageValue: 200Mi

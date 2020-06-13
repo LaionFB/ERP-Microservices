@@ -1,4 +1,22 @@
-# Deployments
+# Services CRM-GATEWAYAPI
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-crm-gatewayapi-service
+spec:
+  externalName: erp-crm-gatewayapi
+  selector:
+    app: erp-crm-gatewayapi
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 5000
+  type: LoadBalancer
+
+---
+
+# Deployments CRM-GATEWAYAPI
 
 apiVersion: apps/v1
 kind: Deployment
@@ -38,9 +56,29 @@ spec:
           - name: REDIS_PORT
             value: "6379"
         ports:
-        - containerPort: 8000
+        - containerPort: 5000
 
 ---
+
+# Services CRM-QUOTESAPI
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-crm-quotesapi-service
+spec:
+  externalName: erp-crm-quotesapi
+  selector:
+    app: erp-crm-quotesapi
+  ports:
+  - name: http
+    port: 8001
+    targetPort: 8001
+  type: LoadBalancer
+
+---
+
+# Deployments CRM-QUOTESAPI
 
 apiVersion: apps/v1
 kind: Deployment
@@ -84,6 +122,26 @@ spec:
 
 ---
 
+# Services CRM-ORDERSAPI
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erp-crm-ordersapi-service
+spec:
+  externalName: erp-crm-ordersapi
+  selector:
+    app: erp-crm-ordersapi
+  ports:
+  - name: http
+    port: 8002
+    targetPort: 8002
+  type: LoadBalancer
+
+---
+
+# Deployments CRM-ORDERSAPI
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -125,134 +183,83 @@ spec:
         - containerPort: 8002
 
 ---
-
-# Services
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-crm-gatewayapi-service
-spec:
-  externalName: erp-crm-gatewayapi
-  selector:
-    app: erp-crm-gatewayapi
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8000
-  type: LoadBalancer
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-crm-quotesapi-service
-spec:
-  externalName: erp-crm-quotesapi
-  selector:
-    app: erp-crm-quotesapi
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8001
-  type: LoadBalancer
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-crm-ordersapi-service
-spec:
-  externalName: erp-crm-ordersapi
-  selector:
-    app: erp-crm-ordersapi
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8002
-  type: LoadBalancer
-
----
-
 # HPAs
 
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: erp-crm-gatewayapi-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: erp-crm-gatewayapi-deploy
-  minReplicas: 1
-  maxReplicas: 8
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Value
-        averageValue: 100m 
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: AverageValue
-        averageValue: 200Mi
+# apiVersion: autoscaling/v2beta2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: erp-crm-gatewayapi-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: erp-crm-gatewayapi-deploy
+#   minReplicas: 1
+#   maxReplicas: 8
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       target:
+#         type: Value
+#         averageValue: 100m 
+#   - type: Resource
+#     resource:
+#       name: memory
+#       target:
+#         type: AverageValue
+#         averageValue: 200Mi
 
----
+# ---
 
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: erp-crm-quotesapi-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: erp-crm-quotesapi-deploy
-  minReplicas: 1
-  maxReplicas: 8
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Value
-        averageValue: 100m 
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: AverageValue
-        averageValue: 200Mi
+# apiVersion: autoscaling/v2beta2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: erp-crm-quotesapi-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: erp-crm-quotesapi-deploy
+#   minReplicas: 1
+#   maxReplicas: 8
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       target:
+#         type: Value
+#         averageValue: 100m 
+#   - type: Resource
+#     resource:
+#       name: memory
+#       target:
+#         type: AverageValue
+#         averageValue: 200Mi
 
----
+# ---
 
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: erp-crm-ordersapi-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: erp-crm-ordersapi-deploy
-  minReplicas: 1
-  maxReplicas: 8
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Value
-        averageValue: 100m 
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: AverageValue
-        averageValue: 200Mi
+# apiVersion: autoscaling/v2beta2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: erp-crm-ordersapi-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: erp-crm-ordersapi-deploy
+#   minReplicas: 1
+#   maxReplicas: 8
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       target:
+#         type: Value
+#         averageValue: 100m 
+#   - type: Resource
+#     resource:
+#       name: memory
+#       target:
+#         type: AverageValue
+#         averageValue: 200Mi
