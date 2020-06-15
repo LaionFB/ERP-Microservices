@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: erp-crm-gatewayapi-container
-        image: rafaelgalani/crm_gateway:15-05-v1
+        image: rafaelgalani/crm_gateway:15-06-v4
         resources:
           requests:
             cpu: "125m"
@@ -43,10 +43,6 @@ spec:
             cpu: "125m"
             memory: "250Mi"
         env:
-          - name: FIRED_EVENT_ROUTING_KEY
-            value: "createdOrderEvent"
-          - name: MESSAGE_BUS_NAME
-            value: "erp_message_bus"
           - name: RABBIT_HOST
             value: rabbitmq-service
           - name: RABBIT_PORT
@@ -100,7 +96,7 @@ spec:
     spec:
       containers:
       - name: erp-crm-quotesapi-container
-        image: rafaelgalani/crm_quotes:15-05-v1
+        image: rafaelgalani/crm_quotes:15-06-v4
         resources:
           requests:
             cpu: "125m"
@@ -109,6 +105,10 @@ spec:
             cpu: "125m"
             memory: "250Mi"
         env:
+          - name: FIRED_EVENT_ROUTING_KEY
+            value: "createdOrderEvent"
+          - name: MESSAGE_BUS_NAME
+            value: "erp_message_bus"
           - name: RABBIT_HOST
             value: rabbitmq-service
           - name: RABBIT_PORT
@@ -162,7 +162,7 @@ spec:
     spec:
       containers:
       - name: erp-crm-ordersapi-container
-        image: rafaelgalani/crm_orders:15-05-v1
+        image: rafaelgalani/crm_orders:15-06-v3
         resources:
           requests:
             cpu: "125m"
