@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: erp-crm-gatewayapi-container
-        image: rafaelgalani/crm_gateway:15-06-v4
+        image: rafaelgalani/crm_gateway:16-06-v1
         resources:
           requests:
             cpu: "125m"
