@@ -21,11 +21,11 @@ spec:
         image: laionfb/erp_ng_frontend:v1
         resources:
           requests:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "50m"
+            memory: "100Mi"
           limits:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "100m"
+            memory: "200Mi"
         ports:
         - containerPort: 80
 
@@ -61,17 +61,17 @@ spec:
     kind: Deployment
     name: erp-frontend-deploy
   minReplicas: 1
-  maxReplicas: 8
+  maxReplicas: 4
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Value
-        averageValue: 100m 
+        averageValue: 75m 
   - type: Resource
     resource:
       name: memory
       target:
         type: AverageValue
-        averageValue: 200Mi
+        averageValue: 150Mi
