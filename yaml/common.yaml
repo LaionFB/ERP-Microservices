@@ -41,62 +41,13 @@ spec:
         image: rabbitmq:3-management
         resources:
           requests:
-            cpu: "125m"
+            cpu: "250m"
             memory: "512Mi"
           limits:
-            cpu: "125m"
+            cpu: "500m"
             memory: "1Gi"
         ports:
         - containerPort: 5672
-
----
-
-# Service SQL Server
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: sqlserver-service
-spec:
-  externalName: sqlserver
-  selector:
-    app: sqlserver
-  ports:
-  - name: database
-    port: 1433
-    targetPort: 1433
-
----
-
-# Deployment SQL Server
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sqlserver-deploy
-  labels:
-    app: sqlserver
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: sqlserver
-  template:
-    metadata:
-      labels:
-        app: sqlserver
-    spec:
-      hostname: sqlserver
-      containers:
-      - name: sqlserver
-        image: mcr.microsoft.com/mssql/server
-        env:
-        - name: SA_PASSWORD
-          value: "TCCpurchase01"
-        - name: ACCEPT_EULA
-          value: "Y"
-        ports:
-        - containerPort: 1433
 
 ---
 
@@ -140,11 +91,11 @@ spec:
         image: redis:4-alpine
         resources:
           requests:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "150m"
+            memory: "300Mi"
           limits:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "300m"
+            memory: "600Mi"
         ports:
         - containerPort: 6379
 

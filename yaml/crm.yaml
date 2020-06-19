@@ -37,11 +37,11 @@ spec:
         image: rafaelgalani/crm_gateway:16-06-v1
         resources:
           requests:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "50m"
+            memory: "100Mi"
           limits:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "100m"
+            memory: "200Mi"
         env:
           - name: RABBIT_HOST
             value: rabbitmq-service
@@ -99,11 +99,11 @@ spec:
         image: rafaelgalani/crm_quotes:15-06-v4
         resources:
           requests:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "50m"
+            memory: "100Mi"
           limits:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "100m"
+            memory: "200Mi"
         env:
           - name: FIRED_EVENT_ROUTING_KEY
             value: "createdOrderEvent"
@@ -165,11 +165,11 @@ spec:
         image: rafaelgalani/crm_orders:15-06-v3
         resources:
           requests:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "50m"
+            memory: "100Mi"
           limits:
-            cpu: "125m"
-            memory: "250Mi"
+            cpu: "100m"
+            memory: "200Mi"
         env:
           - name: RABBIT_HOST
             value: rabbitmq-service
@@ -189,81 +189,81 @@ spec:
 ---
 # HPAs
 
-# apiVersion: autoscaling/v2beta2
-# kind: HorizontalPodAutoscaler
-# metadata:
-#   name: erp-crm-gatewayapi-hpa
-# spec:
-#   scaleTargetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: erp-crm-gatewayapi-deploy
-#   minReplicas: 1
-#   maxReplicas: 8
-#   metrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       target:
-#         type: Value
-#         averageValue: 100m 
-#   - type: Resource
-#     resource:
-#       name: memory
-#       target:
-#         type: AverageValue
-#         averageValue: 200Mi
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-crm-gatewayapi-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-crm-gatewayapi-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 75m
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 150Mi
 
-# ---
+---
 
-# apiVersion: autoscaling/v2beta2
-# kind: HorizontalPodAutoscaler
-# metadata:
-#   name: erp-crm-quotesapi-hpa
-# spec:
-#   scaleTargetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: erp-crm-quotesapi-deploy
-#   minReplicas: 1
-#   maxReplicas: 8
-#   metrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       target:
-#         type: Value
-#         averageValue: 100m 
-#   - type: Resource
-#     resource:
-#       name: memory
-#       target:
-#         type: AverageValue
-#         averageValue: 200Mi
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-crm-quotesapi-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-crm-quotesapi-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 75m
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 150Mi
 
-# ---
+---
 
-# apiVersion: autoscaling/v2beta2
-# kind: HorizontalPodAutoscaler
-# metadata:
-#   name: erp-crm-ordersapi-hpa
-# spec:
-#   scaleTargetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: erp-crm-ordersapi-deploy
-#   minReplicas: 1
-#   maxReplicas: 8
-#   metrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       target:
-#         type: Value
-#         averageValue: 100m 
-#   - type: Resource
-#     resource:
-#       name: memory
-#       target:
-#         type: AverageValue
-#         averageValue: 200Mi
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: erp-crm-ordersapi-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: erp-crm-ordersapi-deploy
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Value
+        averageValue: 75m
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 150Mi

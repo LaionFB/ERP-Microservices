@@ -18,29 +18,29 @@ spec:
     spec:
       containers:
       - name: erp-purchase
-        image: laionfb/erp_purchase:v4
+        image: laionfb/erp_purchase:v8
         resources:
           requests:
-            cpu: "125m"
-            memory: "128Mi"
+            cpu: "150m"
+            memory: "300Mi"
           limits:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "300m"
+            memory: "600Mi"
         env:
         - name: PORT
           value: "80"
         - name: API_GATEWAY_PATH
           value: "/api/purchase"
         - name: SQL_SERVER_HOST
-          value: sqlserver-service
+          value: tcc-microservices.database.windows.net
         - name: SQL_SERVER_PORT
           value: "1433"
         - name: SQL_SERVER_USER
-          value: sa
+          value: tcc
         - name: SQL_SERVER_PASSWORD
-          value: TCCpurchase01
+          value: Micro@2020
         - name: SQL_SERVER_DATA_BASE
-          value: ERPPurchaseModule
+          value: Purchase
         - name: RABBITMQ_HOST
           value: rabbitmq-service
         - name: RABBITMQ_PORT
@@ -50,11 +50,11 @@ spec:
         - name: RABBITMQ_QUEUE
           value: purchasing
         - name: DB_SYNC_DATABASE
-          value: "Y"
+          value: "N"
         - name: DB_SYNC_TABLES
-          value: "Y"
+          value: "N"
         - name: DB_SYNC_DATA
-          value: "Y"
+          value: "N"
         ports:
         - containerPort: 80
 
@@ -97,10 +97,10 @@ spec:
       name: cpu
       target:
         type: Value
-        averageValue: 100m 
+        averageValue: 225m 
   - type: Resource
     resource:
       name: memory
       target:
         type: AverageValue
-        averageValue: 200Mi
+        averageValue: 450Mi
