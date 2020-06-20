@@ -67,7 +67,7 @@ spec:
     resource:
       name: cpu
       target:
-        type: Value
+        type: AverageValue
         averageValue: 75m 
   - type: Resource
     resource:
