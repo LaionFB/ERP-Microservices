@@ -84,7 +84,8 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: erp-inventory-deployinReplicas: 1
+    name: erp-inventory-deploy
+  minReplicas: 1
   maxReplicas: 8
   metrics:
   - type: Resource
