@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: erp-purchase
-        image: laionfb/erp_purchase:v8
+        image: laionfb/erp_purchase:v9
         resources:
           requests:
             cpu: "150m"
