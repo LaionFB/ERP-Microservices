@@ -1,13 +1,13 @@
-# Services CRM-GATEWAYAPI
+# Services
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: erp-crm-gatewayapi-service
+  name: erp-quotes-service
 spec:
-  externalName: erp-crm-gatewayapi
+  externalName: erp-quotes
   selector:
-    app: erp-crm-gatewayapi
+    app: erp-quotes
   ports:
   - name: http
     port: 8000
@@ -16,94 +16,32 @@ spec:
 
 ---
 
-# Deployments CRM-GATEWAYAPI
+# Deployments
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erp-crm-gatewayapi-deploy
+  name: erp-quotes-deploy
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: erp-crm-gatewayapi
+      app: erp-quotes
   template:
     metadata:
       labels:
-        app: erp-crm-gatewayapi
+        app: erp-quotes
     spec:
       containers:
-      - name: erp-crm-gatewayapi-container
-        image: rafaelgalani/crm_gateway:16-06-v1
+      - name: erp-quotes-container
+        image: rafaelgalani/crm_quotes:22-06-no-nameko
         resources:
           requests:
-            cpu: "50m"
-            memory: "100Mi"
+            cpu: "150m"
+            memory: "300Mi"
           limits:
-            cpu: "100m"
-            memory: "200Mi"
-        env:
-          - name: RABBIT_HOST
-            value: rabbitmq-service
-          - name: RABBIT_PORT
-            value: "5672"
-          - name: RABBIT_USER
-            value: guest
-          - name: RABBIT_PASSWORD
-            value: guest
-          - name: REDIS_HOST
-            value: redis-service
-          - name: REDIS_PORT
-            value: "6379"
-        ports:
-        - containerPort: 8000
-
----
-
-# Services CRM-QUOTESAPI
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-crm-quotesapi-service
-spec:
-  externalName: erp-crm-quotesapi
-  selector:
-    app: erp-crm-quotesapi
-  ports:
-  - name: http
-    port: 8001
-    targetPort: 8001
-  type: LoadBalancer
-
----
-
-# Deployments CRM-QUOTESAPI
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: erp-crm-quotesapi-deploy
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: erp-crm-quotesapi
-  template:
-    metadata:
-      labels:
-        app: erp-crm-quotesapi
-    spec:
-      containers:
-      - name: erp-crm-quotesapi-container
-        image: rafaelgalani/crm_quotes:15-06-v4
-        resources:
-          requests:
-            cpu: "50m"
-            memory: "100Mi"
-          limits:
-            cpu: "100m"
-            memory: "200Mi"
+            cpu: "300m"
+            memory: "600Mi"
         env:
           - name: FIRED_EVENT_ROUTING_KEY
             value: "createdOrderEvent"
@@ -122,82 +60,21 @@ spec:
           - name: REDIS_PORT
             value: "6379"
         ports:
-        - containerPort: 8001
+        - containerPort: 8000
 
 ---
 
-# Services CRM-ORDERSAPI
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: erp-crm-ordersapi-service
-spec:
-  externalName: erp-crm-ordersapi
-  selector:
-    app: erp-crm-ordersapi
-  ports:
-  - name: http
-    port: 8002
-    targetPort: 8002
-  type: LoadBalancer
-
----
-
-# Deployments CRM-ORDERSAPI
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: erp-crm-ordersapi-deploy
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: erp-crm-ordersapi
-  template:
-    metadata:
-      labels:
-        app: erp-crm-ordersapi
-    spec:
-      containers:
-      - name: erp-crm-ordersapi-container
-        image: rafaelgalani/crm_orders:15-06-v3
-        resources:
-          requests:
-            cpu: "50m"
-            memory: "100Mi"
-          limits:
-            cpu: "100m"
-            memory: "200Mi"
-        env:
-          - name: RABBIT_HOST
-            value: rabbitmq-service
-          - name: RABBIT_PORT
-            value: "5672"
-          - name: RABBIT_USER
-            value: guest
-          - name: RABBIT_PASSWORD
-            value: guest
-          - name: REDIS_HOST
-            value: redis-service
-          - name: REDIS_PORT
-            value: "6379"
-        ports:
-        - containerPort: 8002
-
----
 # HPAs
 
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: erp-crm-gatewayapi-hpa
+  name: erp-quotes-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: erp-crm-gatewayapi-deploy
+    name: erp-quotes-deploy
   minReplicas: 1
   maxReplicas: 8
   metrics:
@@ -206,64 +83,10 @@ spec:
       name: cpu
       target:
         type: AverageValue
-        averageValue: 75m
+        averageValue: 225m 
   - type: Resource
     resource:
       name: memory
       target:
         type: AverageValue
-        averageValue: 150Mi
-
----
-
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: erp-crm-quotesapi-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: erp-crm-quotesapi-deploy
-  minReplicas: 1
-  maxReplicas: 8
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: AverageValue
-        averageValue: 75m
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: AverageValue
-        averageValue: 150Mi
-
----
-
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: erp-crm-ordersapi-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: erp-crm-ordersapi-deploy
-  minReplicas: 1
-  maxReplicas: 8
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: AverageValue
-        averageValue: 75m
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: AverageValue
-        averageValue: 150Mi
+        averageValue: 450Mi
