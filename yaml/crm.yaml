@@ -76,7 +76,7 @@ spec:
     kind: Deployment
     name: erp-quotes-deploy
   minReplicas: 1
-  maxReplicas: 8
+  maxReplicas: 1
   metrics:
   - type: Resource
     resource:
