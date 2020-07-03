@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: erp-quotes-container
-        image: rafaelgalani/crm_quotes:22-06-no-nameko
+        image: rafaelgalani/crm_quotes
         resources:
           requests:
             cpu: "150m"
