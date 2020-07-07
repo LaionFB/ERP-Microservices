@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: erp-frontend
-        image: laionfb/erp_ng_frontend:v1
+        image: laionfb/erp_ng_frontend:v2
         resources:
           requests:
             cpu: "50m"
